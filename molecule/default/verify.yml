@@ -19,67 +19,101 @@
       ansible.builtin.set_fact:
         listen_tcp_posts: "{{ ansible_facts.tcp_listen | map(attribute='port') | unique | sort | list }}"
         listen_udp_posts: "{{ ansible_facts.udp_listen | map(attribute='port') | unique | sort | list }}"
-    # ## パッケージのテスト
-    # - name: Assert package
-    #   ansible.builtin.assert:
-    #     that:
-    #       - ansible_facts.packages['package'] is defined
-    # ## ユーザーのテスト
-    # - name: Test user
-    #   block:
-    #     - name: Check user
-    #       ansible.builtin.user:
-    #         name: www-data
-    #         system: true
-    #       check_mode: true
-    #       register: result
-    #     - name: Assert user
-    #       ansible.builtin.assert:
-    #         that:
-    #           - result is not changed
-    # ## グループのテスト
-    # - name: Test user
-    #   block:
-    #     - name: Check group
-    #       ansible.builtin.group:
-    #         name: www-data
-    #         system: true
-    #       check_mode: true
-    #       register: result
-    #     - name: Assert group
-    #       ansible.builtin.assert:
-    #         that:
-    #           - result is not changed
-    # ## ファイルのテスト
-    # - name: Test file
-    #   block:
-    #     - name: Check virtualhost setting
-    #       ansible.builtin.stat:
-    #         path: /etc/nginx/sites-available/default
-    #       register: result
-    #     - name: Assert file
-    #       ansible.builtin.assert:
-    #         that:
-    #           - result.stat.exists
-    #     - name: Check virtualhost enabled
-    #       ansible.builtin.stat:
-    #         path: /etc/nginx/sites-enabled/default
-    #       register: result
-    #     - name: Assert file
-    #       ansible.builtin.assert:
-    #         that:
-    #           - result.stat.exists
-    #           - result.stat.islnk
-    #           - result.stat.lnk_source == '/etc/nginx/sites-available/default'
+    ## ユーザーのテスト
+    - name: Test user
+      block:
+        - name: Check user
+          ansible.builtin.user:
+            name: mailpit
+            system: true
+          check_mode: true
+          register: result
+        - name: Assert user
+          ansible.builtin.assert:
+            that:
+              - result is not changed
+    ## グループのテスト
+    - name: Test user
+      block:
+        - name: Check group
+          ansible.builtin.group:
+            name: mailpit
+            system: true
+          check_mode: true
+          register: result
+        - name: Assert group
+          ansible.builtin.assert:
+            that:
+              - result is not changed
+    ## mailpit
+    - name: Test mailpit
+      block:
+    ## ファイルのテスト
+    - name: Test file
+      block:
+        - name: Check installd mailpit
+          ansible.builtin.stat:
+            path: /usr/local/bin/mailpit
+          register: mailpit_bin_result
+        - name: Assert mailpit binary
+          ansible.builtin.assert:
+            that:
+              - mailpit_bin_result.stat.exists
+              - mailpit_bin_result.stat.executable
+        - name: Check mailpit environment file
+          ansible.builtin.stat:
+            path: /etc/default/mailpit
+          register: mailpit_env_file_result
+        - name: Assert mailpit env file
+          ansible.builtin.assert:
+            that:
+              - mailpit_env_file_result.stat.exists
+        - name: Check mailpit systemd unit file
+          ansible.builtin.stat:
+            path: /usr/lib/systemd/system/mailpit.service
+          register: mailpit_systemd_unit_file_result
+        - name: Assert mailpit systemd unit file
+          ansible.builtin.assert:
+            that:
+              - mailpit_systemd_unit_file_result.stat.exists
     ## サービスのテスト
-    # - name: Assert service
-    #   ansible.builtin.assert:
-    #     that:
-    #       - ansible_facts.services['package.service'] is defined
-    #       - ansible_facts.services['package.service']['state'] == 'running'
-    #       - ansible_facts.services['package.service']['status'] == 'enabled'
-    # ## 待受ポートのテスト
-    # - name: Assert listen port
-    #   ansible.builtin.assert:
-    #     that:
-    #       - 123456 in listen_tcp_posts
+    - name: Assert service binary
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['mailpit.service'] is defined
+          - ansible_facts.services['mailpit.service']['state'] == 'running'
+          - ansible_facts.services['mailpit.service']['status'] == 'enabled'
+    ## 待受ポートのテスト
+    - name: Assert service binary
+      ansible.builtin.assert:
+        that:
+          - 1025 in listen_tcp_posts
+          - 8025 in listen_tcp_posts
+    ## APIのテスト
+    - name: Send test mail
+      community.general.mail:
+        subject: test mail subject
+        to: test to <to@example.com>
+        from: test from <from@example.com>
+        body: test mail body
+        port: 1025
+    - name: Test API mailpit infomation request
+      ansible.builtin.uri:
+        url: http://localhost:8025/api/v1/info
+      register: mailpit_api_result
+    - name: Assert API
+      ansible.builtin.assert:
+        that: mailpit_api_result.status == 200
+    - name: Test API List message request
+      ansible.builtin.uri:
+        url: http://localhost:8025/api/v1/messages
+      register: mailpit_list_message_api_result
+    - name: Assert API
+      ansible.builtin.assert:
+        that:
+          - mailpit_list_message_api_result.status == 200
+          - mailpit_list_message_api_result.json.messages[0].Subject == "test mail subject"
+          - mailpit_list_message_api_result.json.messages[0].From.Address == "from@example.com"
+          - mailpit_list_message_api_result.json.messages[0].From.Name == "test from"
+          - mailpit_list_message_api_result.json.messages[0].To[0].Address == "to@example.com"
+          - mailpit_list_message_api_result.json.messages[0].To[0].Name == "test to"
