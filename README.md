@@ -20,9 +20,13 @@ Role Variables
 
 インストールするmailpitのバージョン
 
-### `mailpit_cfg`
+### `mailpit_smtp_bind_addr`
 
-mailpitのポート設定
+mailpitのポート設定(SMTP)
+
+### `mailpit_ui_bind_addr`
+
+mailpitのポート設定(UI)
 
 ### `mailpit_envs`
 
