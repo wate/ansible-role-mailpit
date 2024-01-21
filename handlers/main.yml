@@ -1,0 +1,7 @@
+# code: language=ansible
+---
+- name: restart mailpit
+  ansible.builtin.systemd:
+    name: mailpit
+    state: restarted
+    daemon_reload: true

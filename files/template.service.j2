@@ -1,0 +1,16 @@
+[Unit]
+Description=Sample
+# Requires=network.service
+# After=network.target
+
+[Service]
+Type=simple
+# EnvironmentFile=/etc/default/sample
+# Environment=VAR_NAME=VAR_VALUE
+WorkingDirectory={{ mailpit_home }}
+User={{ mailpit_user }}
+Group={{ mailpit_group }}
+ExecStart={{ mailpit_home }}/bin/execute
+
+[Install]
+WantedBy=multi-user.target

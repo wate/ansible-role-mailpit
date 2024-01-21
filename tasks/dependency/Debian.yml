@@ -1,0 +1,11 @@
+# code: language=ansible
+---
+- name: Add mailpit group
+  ansible.builtin.group:
+    name: "{{ mailpit_group }}"
+    system: true
+- name: Add mailpit user
+  ansible.builtin.user:
+    name: "{{ mailpit_user }}"
+    group: "{{ mailpit_group }}"
+    system: true

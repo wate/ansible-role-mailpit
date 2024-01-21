@@ -1,0 +1,16 @@
+[Unit]
+Description=Mailpit server
+After=network.service
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/mailpit
+ExecStart=/usr/local/sbin/mailpit --smtp {{ mailpit_cfg.smtp_bind_addr }} --listen {{ mailpit_cfg.ui_bind_addr }}
+StandardOutput=journal
+Restart=always
+SyslogIdentifier=mailpit
+User={{ mailpit_user }}
+Group={{ mailpit_group }}
+
+[Install]
+WantedBy=multi-user.target

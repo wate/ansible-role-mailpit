@@ -1,0 +1,16 @@
+# code: language=ansible
+---
+- name: Set download file variable
+  ansible.builtin.set_fact:
+    mailpit_download_file: mailpit-{{ ansible_facts['system'] | lower }}-{{ architecture_types[ansible_facts['architecture']] }}.tar.gz
+  vars:
+    architecture_types:
+      x86_64: amd64
+      aarch64: arm64
+- name: Install mailpit
+  ansible.builtin.unarchive:
+    src: https://github.com/{{ mailpit_repo }}/releases/download/{{ mailpit_version }}/{{ mailpit_download_file }}
+    dest: /usr/local/sbin
+    include:
+      - mailpit
+    remote_src: true
