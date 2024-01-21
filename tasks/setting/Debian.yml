@@ -5,4 +5,4 @@
     src: environment_file.j2
     dest: /etc/default/mailpit
     mode: "0644"
-  notify: restart mailpit
+  notify: Restart mailpit

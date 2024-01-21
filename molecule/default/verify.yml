@@ -20,40 +20,33 @@
         listen_tcp_posts: "{{ ansible_facts.tcp_listen | map(attribute='port') | unique | sort | list }}"
         listen_udp_posts: "{{ ansible_facts.udp_listen | map(attribute='port') | unique | sort | list }}"
     ## ユーザーのテスト
-    - name: Test user
-      block:
-        - name: Check user
-          ansible.builtin.user:
-            name: mailpit
-            system: true
-          check_mode: true
-          register: result
-        - name: Assert user
-          ansible.builtin.assert:
-            that:
-              - result is not changed
+    - name: Check user
+      ansible.builtin.user:
+        name: mailpit
+        system: true
+      check_mode: true
+      register: user_result
+    - name: Assert user
+      ansible.builtin.assert:
+        that:
+          - user_result is not changed
     ## グループのテスト
-    - name: Test user
-      block:
-        - name: Check group
-          ansible.builtin.group:
-            name: mailpit
-            system: true
-          check_mode: true
-          register: result
-        - name: Assert group
-          ansible.builtin.assert:
-            that:
-              - result is not changed
-    ## mailpit
-    - name: Test mailpit
-      block:
+    - name: Check group
+      ansible.builtin.group:
+        name: mailpit
+        system: true
+      check_mode: true
+      register: group_result
+    - name: Assert group
+      ansible.builtin.assert:
+        that:
+          - group_result is not changed
     ## ファイルのテスト
-    - name: Test file
+    - name: Test files
       block:
         - name: Check installd mailpit
           ansible.builtin.stat:
-            path: /usr/local/bin/mailpit
+            path: /usr/local/sbin/mailpit
           register: mailpit_bin_result
         - name: Assert mailpit binary
           ansible.builtin.assert:

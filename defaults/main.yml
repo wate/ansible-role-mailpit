@@ -5,11 +5,14 @@
 mailpit_version: latest
 
 ## --------------------------
-## mailpitのポート設定
+## mailpitのポート設定(SMTP)
 ## --------------------------
-mailpit_cfg:
-  smtp_bind_addr: "0.0.0.0:1025"
-  ui_bind_addr: "0.0.0.0:8025"
+mailpit_smtp_bind_addr: "0.0.0.0:1025"
+
+## --------------------------
+## mailpitのポート設定(UI)
+## --------------------------
+mailpit_ui_bind_addr: "0.0.0.0:8025"
 
 ## --------------------------
 ## mailpitのその他の環境変数

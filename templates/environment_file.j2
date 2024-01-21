@@ -1,3 +1,5 @@
 {% for var_name, var_value in mailpit_envs.items() %}
 {{ var_name }}="{{ var_value }}"
 {% endfor %}
+MP_SMTP_BIND_ADDR={{ mailpit_smtp_bind_addr }}
+MP_UI_BIND_ADDR={{ mailpit_ui_bind_addr }}

@@ -1,5 +1,17 @@
 # code: language=ansible
 ---
+- name: Set Install version variable
+  when: mailpit_version == 'latest'
+  block:
+    - name: Get latest version
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/{{ mailpit_repo }}/releases/latest
+        headers:
+          Accept: application/vnd.github+json
+      register: latest_releases
+    - name: Set version variable
+      ansible.builtin.set_fact:
+        mailpit_version: "{{ latest_releases.json.tag_name }}"
 - name: Find platform task file
   ansible.builtin.set_fact:
     include_task_file: "{{ lookup('first_found', params, errors='ignore') }}"
@@ -11,18 +23,6 @@
         - "{{ ansible_facts.os_family }}.yml"
       paths:
         - tasks/package
-- name: Set Install version variable
-  when: mailpit_version == 'latest'
-  block:
-    - name: Get latest version
-      ansible.builtin.uri:
-        url: https://api.github.com/repos/{{ tools_mailpit_repo }}/releases/latest
-        headers:
-          Accept: application/vnd.github+json
-      register: latest_releases
-    - name: Set version variable
-      ansible.builtin.set_fact:
-        mailpit_version: "{{ latest_releases.json.tag_name }}"
 - name: Install packages
   ansible.builtin.include_tasks:
     file: "{{ include_task_file }}"

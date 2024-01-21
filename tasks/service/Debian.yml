@@ -5,7 +5,7 @@
     src: mailpit.service.j2
     dest: /usr/lib/systemd/system/mailpit.service
     mode: "0644"
-  notify: restart mailpit
+  notify: Restart mailpit
 - name: Service mailpit is active and enabled on system startup
   ansible.builtin.systemd:
     daemon_reload: true
