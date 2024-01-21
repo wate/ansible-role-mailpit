@@ -53,6 +53,17 @@
             that:
               - mailpit_bin_result.stat.exists
               - mailpit_bin_result.stat.executable
+        - name: Check mailpit config directory
+          ansible.builtin.stat:
+            path: /etc/mailpit
+          register: mailpit_config_dir_result
+        - name: Assert mailpit binary
+          ansible.builtin.assert:
+            that:
+              - mailpit_config_dir_result.stat.exists
+              - mailpit_config_dir_result.stat.pw_name == 'mailpit'
+              - mailpit_config_dir_result.stat.gr_name == 'mailpit'
+              - mailpit_config_dir_result.stat.mode == '0755'
         - name: Check mailpit environment file
           ansible.builtin.stat:
             path: /etc/default/mailpit

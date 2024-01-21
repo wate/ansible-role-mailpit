@@ -1,5 +1,12 @@
 # code: language=ansible
 ---
+- name: Create config directory
+  ansible.builtin.file:
+    path: "{{ mailpit_config_dir }}"
+    owner: "{{ mailpit_user }}"
+    group: "{{ mailpit_group }}"
+    mode: "0755"
+    state: directory
 - name: Create/update envirnment file
   ansible.builtin.template:
     src: environment_file.j2
