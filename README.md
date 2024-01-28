@@ -9,7 +9,6 @@ OS Platform
 ### Debian
 
 - bookworm
-- bullseye
 
 Role Variables
 --------------
@@ -20,17 +19,15 @@ Role Variables
 
 インストールするmailpitのバージョン
 
-### `mailpit_smtp_bind_addr`
+### `mailpit_cfg`
 
-mailpitのポート設定(SMTP)
-
-### `mailpit_ui_bind_addr`
-
-mailpitのポート設定(UI)
+mailpitの設定  
+@see https://mailpit.axllent.org/docs/configuration/runtime-options/
 
 ### `mailpit_envs`
 
-mailpitのその他の環境変数
+mailpitの環境変数  
+@see https://mailpit.axllent.org/docs/configuration/runtime-options/
 
 Example Playbook
 --------------
