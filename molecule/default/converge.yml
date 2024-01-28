@@ -20,6 +20,8 @@
         update_cache: true
       when: ansible_facts.pkg_mgr == 'dnf'
       changed_when: false
+  roles:
+    - role: spamassassin
   tasks:
     - name: Include role
       ansible.builtin.include_role:

@@ -5,7 +5,7 @@ After=network.service
 [Service]
 Type=simple
 EnvironmentFile=/etc/default/mailpit
-ExecStart=/usr/local/sbin/mailpit
+ExecStart=/usr/local/sbin/mailpit {{ mailpit_cli_args | join(' ') }}
 StandardOutput=journal
 Restart=always
 SyslogIdentifier=mailpit

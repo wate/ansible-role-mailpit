@@ -7,9 +7,3 @@
     group: "{{ mailpit_group }}"
     mode: "0755"
     state: directory
-- name: Create/update envirnment file
-  ansible.builtin.template:
-    src: environment_file.j2
-    dest: /etc/default/mailpit
-    mode: "0644"
-  notify: Restart mailpit

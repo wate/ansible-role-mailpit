@@ -5,17 +5,17 @@
 mailpit_version: latest
 
 ## --------------------------
-## mailpitのポート設定(SMTP)
+## mailpitの設定
+## @see https://mailpit.axllent.org/docs/configuration/runtime-options/
 ## --------------------------
-mailpit_smtp_bind_addr: "0.0.0.0:1025"
+mailpit_cfg:
+  smtp: "0.0.0.0:1025"
+  listen: "0.0.0.0:8025"
+  # api-cors: "*"
 
 ## --------------------------
-## mailpitのポート設定(UI)
-## --------------------------
-mailpit_ui_bind_addr: "0.0.0.0:8025"
-
-## --------------------------
-## mailpitのその他の環境変数
+## mailpitの環境変数
+## @see https://mailpit.axllent.org/docs/configuration/runtime-options/
 ## --------------------------
 mailpit_envs: {}
 #   MP_ENABLE_SPAMASSASSIN: "127.0.0.1:783"

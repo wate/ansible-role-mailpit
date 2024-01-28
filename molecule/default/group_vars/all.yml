@@ -1,4 +1,3 @@
 ---
 mailpit_envs:
-  MP_MAX_MESSAGES: 100
-  # MP_ENABLE_SPAMASSASSIN: localhost:783
+  MP_ENABLE_SPAMASSASSIN: localhost:783

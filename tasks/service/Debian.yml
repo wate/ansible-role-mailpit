@@ -1,5 +1,18 @@
 # code: language=ansible
 ---
+- name: Set mailpit cli args variable
+  ansible.builtin.set_fact:
+    mailpit_cli_args: "{{ mailpit_cli_args | default([]) + ['--' + mailpit_cli_arg.key + '=\"' + mailpit_cli_arg.value + '\"'] }}"
+  loop: "{{ mailpit_cfg | dict2items }}"
+  loop_control:
+    loop_var: mailpit_cli_arg
+    label: "{{ mailpit_cli_arg.key }}:{{ mailpit_cli_arg.value }}"
+- name: Create/update envirnment file
+  ansible.builtin.template:
+    src: environment_file.j2
+    dest: /etc/default/mailpit
+    mode: "0644"
+  notify: Restart mailpit
 - name: Create/update mailpit systemd unit file
   ansible.builtin.template:
     src: mailpit.service.j2
