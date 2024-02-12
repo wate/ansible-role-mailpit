@@ -46,7 +46,7 @@
       block:
         - name: Check installd mailpit
           ansible.builtin.stat:
-            path: /usr/local/sbin/mailpit
+            path: /usr/local/bin/mailpit
           register: mailpit_bin_result
         - name: Assert mailpit binary
           ansible.builtin.assert:

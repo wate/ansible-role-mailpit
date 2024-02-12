@@ -5,12 +5,12 @@ After=network.service
 [Service]
 Type=simple
 EnvironmentFile=/etc/default/mailpit
-ExecStart=/usr/local/sbin/mailpit {{ mailpit_cli_args | join(' ') }}
-StandardOutput=journal
-Restart=always
-SyslogIdentifier=mailpit
 User={{ mailpit_user }}
 Group={{ mailpit_group }}
+ExecStart=/usr/local/bin/mailpit {{ mailpit_cli_args | join(' ') }}
+StandardOutput=journal
+SyslogIdentifier=mailpit
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

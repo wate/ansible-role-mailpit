@@ -10,7 +10,7 @@
 - name: Install mailpit
   ansible.builtin.unarchive:
     src: https://github.com/{{ mailpit_repo }}/releases/download/{{ mailpit_version }}/{{ mailpit_download_file }}
-    dest: /usr/local/sbin
+    dest: /usr/local/bin
     include:
       - mailpit
     remote_src: true
