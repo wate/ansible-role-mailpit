@@ -1,0 +1,11 @@
+direnv
+dotenv
+geerlingguy
+gnupg
+mailpit
+mariadb
+mssql
+mysql
+postgres
+postgresql
+spamassassin

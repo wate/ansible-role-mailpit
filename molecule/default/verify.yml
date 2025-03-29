@@ -101,7 +101,7 @@
         from: test from <from@example.com>
         body: test mail body
         port: 1025
-    - name: Test API mailpit infomation request
+    - name: Test API mailpit information request
       ansible.builtin.uri:
         url: http://localhost:8025/api/v1/info
       register: mailpit_api_result
