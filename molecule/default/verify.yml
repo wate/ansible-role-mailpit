@@ -44,7 +44,7 @@
     ## ファイルのテスト
     - name: Test files
       block:
-        - name: Check installd mailpit
+        - name: Check installed mailpit
           ansible.builtin.stat:
             path: /usr/local/bin/mailpit
           register: mailpit_bin_result

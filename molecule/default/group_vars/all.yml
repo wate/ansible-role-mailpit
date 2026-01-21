@@ -1,3 +1,3 @@
 ---
 mailpit_envs:
-  MP_ENABLE_SPAMASSASSIN: localhost:783
+  MP_ENABLE_SPAMASSASSIN: postmark
