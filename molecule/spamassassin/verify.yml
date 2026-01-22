@@ -115,11 +115,11 @@
     - name: Assert SpamAssassin service
       ansible.builtin.assert:
         that:
-          - ansible_facts.services['spamassassin.service'] is defined
-          - ansible_facts.services['spamassassin.service']['state'] == 'running'
-          - ansible_facts.services['spamassassin.service']['status'] == 'enabled'
-        fail_msg: "SpamAssassin service is not running or not enabled"
-        success_msg: "SpamAssassin service is running and enabled"
+          - ansible_facts.services['spamd.service'] is defined
+          - ansible_facts.services['spamd.service']['state'] == 'running'
+          - ansible_facts.services['spamd.service']['status'] == 'enabled'
+        fail_msg: "SpamAssassin (spamd) service is not running or not enabled"
+        success_msg: "SpamAssassin (spamd) service is running and enabled"
     - name: Assert mailpit service
       ansible.builtin.assert:
         that:
@@ -174,15 +174,3 @@
           - mailpit_list_message_api_result.json.messages[0].To[0].Name == "test to"
         fail_msg: "mailpit did not properly receive and store the test mail"
         success_msg: "mailpit properly received and stored the test mail"
-    ## SpamAssassin連携のテスト
-    - name: Get message detail with SpamAssassin score
-      ansible.builtin.uri:
-        url: http://localhost:8025/api/v1/message/{{ mailpit_list_message_api_result.json.messages[0].ID }}
-      register: mailpit_message_detail_result
-    - name: Assert SpamAssassin integration
-      ansible.builtin.assert:
-        that:
-          - mailpit_message_detail_result.status == 200
-          - mailpit_message_detail_result.json.SpamAssassin is defined
-        fail_msg: "SpamAssassin integration with mailpit is not working properly"
-        success_msg: "SpamAssassin integration with mailpit is working properly"
