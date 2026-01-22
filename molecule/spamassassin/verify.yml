@@ -19,6 +19,13 @@
       ansible.builtin.set_fact:
         listen_tcp_posts: "{{ ansible_facts.tcp_listen | map(attribute='port') | unique | sort | list }}"
         listen_udp_posts: "{{ ansible_facts.udp_listen | map(attribute='port') | unique | sort | list }}"
+    ## SpamAssassinパッケージのテスト
+    - name: Assert SpamAssassin package
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.packages['spamassassin'] is defined
+        fail_msg: "SpamAssassin package is not installed"
+        success_msg: "SpamAssassin package is installed"
     ## ユーザーのテスト
     - name: Check user
       ansible.builtin.user:
@@ -85,7 +92,7 @@
         - name: Check mailpit SpamAssassin configuration
           ansible.builtin.lineinfile:
             path: /etc/default/mailpit
-            line: 'MP_ENABLE_SPAMASSASSIN="postmark"'
+            line: 'MP_ENABLE_SPAMASSASSIN="localhost:783"'
           check_mode: true
           register: mailpit_spamassassin_cfg_result
         - name: Assert mailpit SpamAssassin configuration
@@ -105,7 +112,15 @@
             fail_msg: "mailpit systemd unit file not found"
             success_msg: "mailpit systemd unit file exists"
     ## サービスのテスト
-    - name: Assert service running
+    - name: Assert SpamAssassin service
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['spamassassin.service'] is defined
+          - ansible_facts.services['spamassassin.service']['state'] == 'running'
+          - ansible_facts.services['spamassassin.service']['status'] == 'enabled'
+        fail_msg: "SpamAssassin service is not running or not enabled"
+        success_msg: "SpamAssassin service is running and enabled"
+    - name: Assert mailpit service
       ansible.builtin.assert:
         that:
           - ansible_facts.services['mailpit.service'] is defined
@@ -114,7 +129,13 @@
         fail_msg: "mailpit service is not running or not enabled"
         success_msg: "mailpit service is running and enabled"
     ## 待受ポートのテスト
-    - name: Assert listening ports
+    - name: Assert SpamAssassin listening port
+      ansible.builtin.assert:
+        that:
+          - 783 in listen_tcp_posts
+        fail_msg: "SpamAssassin is not listening on port 783"
+        success_msg: "SpamAssassin is listening on port 783"
+    - name: Assert mailpit listening ports
       ansible.builtin.assert:
         that:
           - 1025 in listen_tcp_posts
@@ -153,3 +174,15 @@
           - mailpit_list_message_api_result.json.messages[0].To[0].Name == "test to"
         fail_msg: "mailpit did not properly receive and store the test mail"
         success_msg: "mailpit properly received and stored the test mail"
+    ## SpamAssassin連携のテスト
+    - name: Get message detail with SpamAssassin score
+      ansible.builtin.uri:
+        url: http://localhost:8025/api/v1/message/{{ mailpit_list_message_api_result.json.messages[0].ID }}
+      register: mailpit_message_detail_result
+    - name: Assert SpamAssassin integration
+      ansible.builtin.assert:
+        that:
+          - mailpit_message_detail_result.status == 200
+          - mailpit_message_detail_result.json.SpamAssassin is defined
+        fail_msg: "SpamAssassin integration with mailpit is not working properly"
+        success_msg: "SpamAssassin integration with mailpit is working properly"
