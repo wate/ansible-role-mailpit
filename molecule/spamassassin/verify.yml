@@ -27,31 +27,27 @@
         fail_msg: "SpamAssassin package is not installed"
         success_msg: "SpamAssassin package is installed"
     ## ユーザーのテスト
-    - name: Check user
-      ansible.builtin.user:
-        name: mailpit
-        system: true
-      check_mode: true
-      register: user_result
+    - name: Get user facts
+      ansible.builtin.getent:
+        database: passwd
+        key: mailpit
     - name: Assert user
       ansible.builtin.assert:
         that:
-          - user_result is not changed
-        fail_msg: "mailpit user is not properly configured"
-        success_msg: "mailpit user is properly configured"
+          - getent_passwd['mailpit'] is defined
+        fail_msg: "mailpit user does not exist"
+        success_msg: "mailpit user exists"
     ## グループのテスト
-    - name: Check group
-      ansible.builtin.group:
-        name: mailpit
-        system: true
-      check_mode: true
-      register: group_result
+    - name: Get group facts
+      ansible.builtin.getent:
+        database: group
+        key: mailpit
     - name: Assert group
       ansible.builtin.assert:
         that:
-          - group_result is not changed
-        fail_msg: "mailpit group is not properly configured"
-        success_msg: "mailpit group is properly configured"
+          - getent_group['mailpit'] is defined
+        fail_msg: "mailpit group does not exist"
+        success_msg: "mailpit group exists"
     ## ファイルのテスト
     - name: Test files
       block:
