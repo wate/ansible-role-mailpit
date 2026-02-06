@@ -18,7 +18,9 @@ tasks:
       - task: notify
   spamassassin:
     desc: Run Molecule tests for spamassassin scenario
-    cmd: molecule test -s spamassassin
+    cmds:
+      - molecule test -s spamassassin
+      - task: notify
   all:
     desc: Run Molecule tests for all scenarios (sequential)
     cmds:
