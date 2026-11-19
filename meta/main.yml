@@ -1,6 +1,7 @@
 ---
 galaxy_info:
   role_name: mailpit
+  namespace: wate
   author: yoshiaki tanaka
   description: Setup mailpit
   license: Apache
